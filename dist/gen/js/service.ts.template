@@ -1,4 +1,4 @@
-/// <reference path="../types.ts"/>
+/// <reference path="../typeings.d.ts"/>
 // Auto-generated, edits will be overwritten
 import spec from './spec';;
 
