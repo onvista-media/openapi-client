@@ -12,7 +12,7 @@ function genTypesFile(spec, options) {
     util_1.join(lines, renderHeader());
     util_1.join(lines, renderDefinitions(spec, options));
     return {
-        path: `${options.outDir}/types.${options.language}`,
+        path: `${options.outDir}/typeings.d.${options.language}`,
         contents: lines.join('\n')
     };
 }
@@ -132,12 +132,22 @@ export interface OperationSecurity {
 }
 
 export interface OperationParamGroups {
-  header?: {[key: string]: string}${support_1.ST}
-  path?: {[key: string]: string|number|boolean}${support_1.ST}
-  query?: {[key: string]: string|string[]|number|boolean}${support_1.ST}
-  formData?: {[key: string]: string|number|boolean}${support_1.ST}
-  body?: any${support_1.ST}
-}
+    header?: { [key: string]: string }
+    path?: { [key: string]: string | number | boolean }
+    query?: {
+      [key: string]:
+      | string
+      | string[]
+      | number
+      | number[]
+      | boolean
+      | boolean[]
+      | Date
+      | undefined
+    }
+    formData?: { [key: string]: string | number | boolean }
+    body?: any
+  }
 
 export interface ServiceRequest {
   method: HttpMethod${support_1.ST}

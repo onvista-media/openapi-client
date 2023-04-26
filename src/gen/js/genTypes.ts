@@ -11,7 +11,7 @@ export function genTypesFile(spec: ApiSpec, options: ClientOptions) {
   join(lines, renderHeader())
   join(lines, renderDefinitions(spec, options))
   return {
-    path: `${options.outDir}/types.${options.language}`,
+    path: `${options.outDir}/typeings.d.${options.language}`,
     contents: lines.join('\n')
   }
 }
@@ -139,12 +139,22 @@ export interface OperationSecurity {
 }
 
 export interface OperationParamGroups {
-  header?: {[key: string]: string}${ST}
-  path?: {[key: string]: string|number|boolean}${ST}
-  query?: {[key: string]: string|string[]|number|boolean}${ST}
-  formData?: {[key: string]: string|number|boolean}${ST}
-  body?: any${ST}
-}
+    header?: { [key: string]: string }
+    path?: { [key: string]: string | number | boolean }
+    query?: {
+      [key: string]:
+      | string
+      | string[]
+      | number
+      | number[]
+      | boolean
+      | boolean[]
+      | Date
+      | undefined
+    }
+    formData?: { [key: string]: string | number | boolean }
+    body?: any
+  }
 
 export interface ServiceRequest {
   method: HttpMethod${ST}
