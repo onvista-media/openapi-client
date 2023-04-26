@@ -11,7 +11,7 @@ export function genTypesFile(spec: ApiSpec, options: ClientOptions) {
   join(lines, renderHeader())
   join(lines, renderDefinitions(spec, options))
   return {
-    path: `${options.outDir}/types.${options.language}`,
+    path: `${options.outDir}/typeings.d.${options.language}`,
     contents: lines.join('\n')
   }
 }
