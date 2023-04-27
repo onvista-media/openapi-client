@@ -21,6 +21,7 @@ function loadJson(src: string): Promise<ApiSpec> {
     return fetch(src)
       .then(response => response.json())
   } else if (String(process) === '[object process]') {
+    //@ts-ignore
     return readFile(src)
       .then(contents => parseFileContents(contents, src))
   } else {
