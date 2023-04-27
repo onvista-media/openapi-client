@@ -64,15 +64,15 @@ type CollectionFormat = "csv" | "ssv" | "tsv" | "pipes" | "multi";
 interface ApiOperationParamBase {
   type: "string" | "number" | "integer" | "boolean" | "array" | "file";
   format:
-    | "int32"
-    | "int64"
-    | "float"
-    | "double"
-    | "byte"
-    | "binary"
-    | "date"
-    | "date-time"
-    | "password";
+  | "int32"
+  | "int64"
+  | "float"
+  | "double"
+  | "byte"
+  | "binary"
+  | "date"
+  | "date-time"
+  | "password";
   items: ApiOperationParamBase;
   collectionFormat: CollectionFormat;
   default: any;

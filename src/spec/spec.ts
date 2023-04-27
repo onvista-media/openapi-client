@@ -101,7 +101,8 @@ export function expandRefs(
       !(options.ignoreRefType && data.$ref.startsWith(options.ignoreRefType))
     ) {
       const resolved = expandRef(data.$ref, lookup);
-      delete data.$ref;
+      // TODO: why data.ref is deleted
+      // delete data.$ref;
       data = Object.assign({}, resolved, data);
     }
     dataCache.add(data);

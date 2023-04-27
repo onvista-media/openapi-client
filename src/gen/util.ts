@@ -34,13 +34,23 @@ export function camelToUppercase(value: string): string {
 
 export function getBestResponse(op: ApiOperation): ApiOperationResponse {
   const NOT_FOUND = 100000;
-  const lowestCode = op.responses.reduce((code, resp) => {
-    const responseCode = parseInt(resp.code);
-    if (isNaN(responseCode) || responseCode >= code) return code;
-    else return responseCode;
-  }, NOT_FOUND);
 
-  return lowestCode === NOT_FOUND
+  let lowestCode: string;
+  for (let resp of op.responses) {
+    if (resp.code === "default") {
+      lowestCode = resp.code;
+      break;
+    }
+
+    const responseCode = parseInt(resp.code);
+    if (isNaN(responseCode) || responseCode >= parseInt(lowestCode)) {
+      lowestCode = lowestCode;
+    } else {
+      lowestCode = `${responseCode}`;
+    }
+  }
+
+  return lowestCode === `${NOT_FOUND}`
     ? op.responses[0]
     : op.responses.find((resp) => resp.code == `${lowestCode}`);
 }

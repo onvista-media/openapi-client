@@ -33,9 +33,11 @@ function renderHeader() {
 
 function renderDefinitions(spec: ApiSpec, options: ClientOptions): string[] {
   const isTs = options.language === "ts";
-  const defs = spec.definitions || {};
+  const defs = spec["components"]["schemas"] || {};
   const typeLines = isTs ? [`namespace api {`] : undefined;
   const docLines = [];
+
+  console.log("render types", defs);
   Object.keys(defs).forEach((name) => {
     const def = defs[name];
     if (isTs) {
@@ -381,11 +383,11 @@ function verifyAllOf(name: string, allOf: any[]) {
   // but seems to be how most model inheritance in Swagger and is consistent
   // with other code generation tool
   if (!allOf || allOf.length !== 2) {
-    console.log(allOf);
     throw new Error(
       `Json schema allOf '${name}' must have two elements to be treated as inheritance`
     );
   }
+  console.log("verifyAllof", { name, allOf });
   const ref = allOf[0];
   if (!ref.$ref) {
     throw new Error(

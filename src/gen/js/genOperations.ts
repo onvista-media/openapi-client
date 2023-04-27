@@ -16,12 +16,34 @@ export default function genOperations(
   files.forEach((file) => writeFileSync(file.path, file.contents));
 }
 
+// OW: Current wip
 export function genOperationGroupFiles(
   spec: ApiSpec,
   operations: ApiOperation[],
   options: ClientOptions
 ) {
   operations.forEach((op, index) => {
+    if (op.responses) {
+      writeFileSync(
+        "./output/resp.json",
+        JSON.stringify(operations[index].responses)
+      );
+      operations[index].responses = operations[
+        index
+      ].responses.map<ApiOperationResponse>((res) => {
+        //@ts-ignore
+        if (res?.content?.["application/json"]?.schema) {
+          //@ts-ignore
+          // console.log({ schema: res.content["application/json"].schema });
+          return {
+            ...res,
+            //@ts-ignore
+            schema: res.content["application/json"].schema,
+          };
+        }
+        return res;
+      });
+    }
     if (op.requestBody) {
       operations[index].parameters.push(
         // @ts-ignore
@@ -230,7 +252,18 @@ function renderReturnSignature(
 ): string {
   if (options.language !== "ts") return "";
   const response = getBestResponse(op);
-  return `: Promise<api.Response<${getTSParamType(response)}>>`;
+  writeFileSync(
+    "./output/test.json",
+    JSON.stringify({ response, op, options }, null, 4)
+  );
+  // console.log({
+  //   response,
+  //   op,
+  // });
+  return `: Promise<api.Response<${getTSParamType({
+    ...response,
+    $ref: "#/components/schemas/UserIdentifier",
+  })}>>`;
 }
 
 function getParamSignature(

@@ -30,6 +30,7 @@ export function formatDocDescription(description: string): string {
 }
 
 export function getDocType(param: any): string {
+  // console.log({ getDoc: param });
   if (!param) {
     return "object";
   } else if (param.$ref) {
@@ -58,6 +59,8 @@ export function getDocType(param: any): string {
   }
 }
 
+//
+// OW: Current wip
 export function getTSParamType(param: any, inTypesModule?: boolean): string {
   if (!param) {
     return "any";
