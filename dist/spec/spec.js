@@ -1,5 +1,7 @@
 "use strict";
-const YAML = require('js-yaml');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.expandRefs = exports.resolveSpec = void 0;
+const YAML = require("js-yaml");
 function resolveSpec(src, options) {
     if (!options)
         options = {};
@@ -17,6 +19,7 @@ function loadJson(src) {
             .then(response => response.json());
     }
     else if (String(process) === '[object process]') {
+        //@ts-ignore
         return readFile(src)
             .then(contents => parseFileContents(contents, src));
     }

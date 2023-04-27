@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 "use strict";
-const program = require('commander');
-const chalk = require('chalk');
-const index_1 = require('./index');
+Object.defineProperty(exports, "__esModule", { value: true });
+const program = require("commander");
+const chalk = require("chalk");
+const index_1 = require("./index");
 const args = program
     .version(require('../package.json').version)
     .option('-s, --src <url|path>', 'The url or path to the Open API spec file', String, process.env.OPEN_API_SRC)
@@ -12,7 +13,7 @@ const args = program
     .option('--semicolon', 'True if wanting to use a semicolon statement terminator', process.env.OPEN_API_SEMICOLON)
     .option('--indent <2|4|tab>', 'Indentation to use, defaults to 2 spaces', process.env.OPEN_API_INDENT)
     .parse(process.argv);
-index_1.genCode(args).then(complete, error);
+(0, index_1.genCode)(args).then(complete, error);
 function complete(spec) {
     console.info(chalk.bold.cyan(`Api ${args.src} code generated into ${args.outDir}`));
     process.exit(0);

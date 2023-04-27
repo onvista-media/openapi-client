@@ -1,12 +1,14 @@
 "use strict";
-require('isomorphic-fetch');
-const spec_1 = require('./spec');
-const js_1 = require('./gen/js');
-const util_1 = require('./gen/util');
-const assert = require('assert');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genCode = void 0;
+require("isomorphic-fetch");
+const spec_1 = require("./spec");
+const js_1 = require("./gen/js");
+const util_1 = require("./gen/util");
+const assert = require("assert");
 function genCode(options) {
     return verifyOptions(options)
-        .then(options => spec_1.resolveSpec(options.src, { ignoreRefType: '#/definitions/' })
+        .then(options => (0, spec_1.resolveSpec)(options.src, { ignoreRefType: '#/definitions/' })
         .then(spec => gen(spec, options)));
 }
 exports.genCode = genCode;
@@ -22,11 +24,11 @@ function verifyOptions(options) {
     }
 }
 function gen(spec, options) {
-    util_1.removeOldFiles(options);
-    const operations = spec_1.getOperations(spec);
+    (0, util_1.removeOldFiles)(options);
+    const operations = (0, spec_1.getOperations)(spec);
     switch (options.language) {
-        case 'js': return js_1.default(spec, operations, options);
-        case 'ts': return js_1.default(spec, operations, options);
+        case 'js': return (0, js_1.default)(spec, operations, options);
+        case 'ts': return (0, js_1.default)(spec, operations, options);
         default:
             throw new Error(`Language '${options.language}' not supported`);
     }
