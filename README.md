@@ -6,6 +6,13 @@ Also supports optional Redux action creator generation.
 
 Tested against JSON services.
 
+## Local Testing
+
+Run `yarn link` in this package to [symlink the package](https://classic.yarnpkg.com/lang/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link) in to your global name space
+In the package you would like to test the open api client in run `yarn link  openapi-client` (package name)
+
+> ⚠️ Once you are finished run `yarn unlink` and install dependencies again with `yarn --force` to ensure to use the npm version
+
 ## Install
 
 In your project
