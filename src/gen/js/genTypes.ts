@@ -37,7 +37,6 @@ function renderDefinitions(spec: ApiSpec, options: ClientOptions): string[] {
   const typeLines = isTs ? [`namespace api {`] : undefined;
   const docLines = [];
 
-  console.log("render types", defs);
   Object.keys(defs).forEach((name) => {
     const def = defs[name];
     if (isTs) {
@@ -355,7 +354,7 @@ function renderTypeDoc(name: string, def: any): string[] {
     `${DOC}@memberof module:${group}`,
   ];
   const req = def.required || [];
-  const propLines = Object.keys(def.properties).map((prop) => {
+  const propLines = Object.keys(def.properties || {}).map((prop) => {
     const info = def.properties[prop];
     const description = (info.description || "")
       .trim()
@@ -387,7 +386,7 @@ function verifyAllOf(name: string, allOf: any[]) {
       `Json schema allOf '${name}' must have two elements to be treated as inheritance`
     );
   }
-  console.log("verifyAllof", { name, allOf });
+
   const ref = allOf[0];
   if (!ref.$ref) {
     throw new Error(

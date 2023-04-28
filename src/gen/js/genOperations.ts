@@ -24,17 +24,15 @@ export function genOperationGroupFiles(
 ) {
   operations.forEach((op, index) => {
     if (op.responses) {
-      writeFileSync(
-        "./output/resp.json",
-        JSON.stringify(operations[index].responses)
-      );
       operations[index].responses = operations[
         index
       ].responses.map<ApiOperationResponse>((res) => {
         //@ts-ignore
+        // TODO switch figo / trading / api
+        console.log({ schema: res?.content["application/json"] });
+        //@ts-ignore
         if (res?.content?.["application/json"]?.schema) {
           //@ts-ignore
-          // console.log({ schema: res.content["application/json"].schema });
           return {
             ...res,
             //@ts-ignore
@@ -252,17 +250,12 @@ function renderReturnSignature(
 ): string {
   if (options.language !== "ts") return "";
   const response = getBestResponse(op);
-  writeFileSync(
-    "./output/test.json",
-    JSON.stringify({ response, op, options }, null, 4)
-  );
   // console.log({
   //   response,
   //   op,
   // });
   return `: Promise<api.Response<${getTSParamType({
     ...response,
-    $ref: "#/components/schemas/UserIdentifier",
   })}>>`;
 }
 
