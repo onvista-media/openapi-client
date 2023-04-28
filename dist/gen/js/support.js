@@ -31,8 +31,8 @@ function formatDocDescription(description) {
     return (description || "").trim().replace(/\n/g, `\n${exports.DOC}${exports.SP}`);
 }
 exports.formatDocDescription = formatDocDescription;
+const arrayCache = new Map();
 function getDocType(param) {
-    // console.log({ getDoc: param });
     if (!param) {
         return "object";
     }
@@ -45,7 +45,14 @@ function getDocType(param) {
     }
     else if (param.type === "array") {
         if (param.items.type) {
-            return `${getDocType(param.items)}[]`;
+            if (arrayCache.has(param.items.type)) {
+                return `${arrayCache.get(param.items.type)}[]`;
+            }
+            else {
+                const docType = `${getDocType(param.items)}[]`;
+                arrayCache.set(param.items.type, docType);
+                return docType;
+            }
         }
         else if (param.items.$ref) {
             const type = param.items.$ref.split("/").pop();
@@ -67,8 +74,6 @@ function getDocType(param) {
     }
 }
 exports.getDocType = getDocType;
-//
-// OW: Current wip
 function getTSParamType(param, inTypesModule) {
     if (!param) {
         return "any";

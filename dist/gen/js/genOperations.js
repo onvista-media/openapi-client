@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getParamName = exports.renderParamSignature = exports.renderOperationGroup = exports.genOperationGroupFiles = void 0;
+//@ts-nocheck
 const util_1 = require("../util");
 const support_1 = require("./support");
 function genOperations(spec, operations, options) {
@@ -8,22 +9,20 @@ function genOperations(spec, operations, options) {
     files.forEach((file) => (0, util_1.writeFileSync)(file.path, file.contents));
 }
 exports.default = genOperations;
-// OW: Current wip
 function genOperationGroupFiles(spec, operations, options) {
     operations.forEach((op, index) => {
         if (op.responses) {
-            (0, util_1.writeFileSync)("./output/resp.json", JSON.stringify(operations[index].responses));
             operations[index].responses = operations[index].responses.map((res) => {
-                var _a, _b;
-                //@ts-ignore
-                if ((_b = (_a = res === null || res === void 0 ? void 0 : res.content) === null || _a === void 0 ? void 0 : _a["application/json"]) === null || _b === void 0 ? void 0 : _b.schema) {
-                    //@ts-ignore
-                    // console.log({ schema: res.content["application/json"].schema });
-                    return Object.assign(Object.assign({}, res), { 
-                        //@ts-ignore
-                        schema: res.content["application/json"].schema });
+                var _a;
+                if (!res.content) {
+                    return res;
                 }
-                return res;
+                if (Object.keys(res.content).length >= 2) {
+                    // currently not optimized to support multiple content return types
+                    throw new Error("To many keys");
+                }
+                //@ts-ignore
+                return Object.assign(Object.assign({}, res), { schema: ((_a = res === null || res === void 0 ? void 0 : res.content[Object.keys(res === null || res === void 0 ? void 0 : res.content)[0] || ""]) === null || _a === void 0 ? void 0 : _a.schema) || {} });
             });
         }
         if (op.requestBody) {
@@ -183,12 +182,7 @@ function renderReturnSignature(op, options) {
     if (options.language !== "ts")
         return "";
     const response = (0, util_1.getBestResponse)(op);
-    (0, util_1.writeFileSync)("./output/test.json", JSON.stringify({ response, op, options }, null, 4));
-    // console.log({
-    //   response,
-    //   op,
-    // });
-    return `: Promise<api.Response<${(0, support_1.getTSParamType)(Object.assign(Object.assign({}, response), { $ref: "#/components/schemas/UserIdentifier" }))}>>`;
+    return `: Promise<api.Response<${(0, support_1.getTSParamType)(Object.assign({}, response))}>>`;
 }
 function getParamSignature(param, options) {
     const signature = [getParamName(param.name)];
