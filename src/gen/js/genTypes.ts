@@ -51,8 +51,33 @@ function renderDefinitions(spec: ApiSpec, options: ClientOptions): string[] {
   return isTs ? typeLines.concat(docLines) : docLines;
 }
 
+function renderEnumToUnion(
+  name: string,
+  def: { type: string; description?: string; enum: string[] }
+) {
+  let lines: string[] = [];
+  lines.push(`/**`);
+  lines.push(`${DOC}${name}`);
+  if (def.description) {
+    lines.push(DOC + def.description.trim().replace(/\n/g, `\n${DOC}${SP}`));
+  }
+  lines.push(` */`);
+  lines.push(
+    `type ${name} = ${def.enum.map((type) => `'${type}'`).join(" | ")}`
+  );
+  lines.push("");
+  return lines;
+}
+
 function renderTsType(name, def, options) {
-  if (def.allOf) return renderTsInheritance(name, def.allOf, options);
+  if (def.allOf && def.allOf.length >= 2) {
+    return renderTsInheritance(name, def.allOf, options);
+  }
+
+  if (def.type === "string" && "enum" in def) {
+    return renderEnumToUnion(name, def);
+  }
+
   if (def.type !== "object") {
     console.warn(`Unable to render ${name} ${def.type}, skipping.`);
     return [];
@@ -81,8 +106,10 @@ function renderTsType(name, def, options) {
 
   join(lines, requiredPropLines);
   join(lines, optionalPropLines);
+
   lines.push("}");
   lines.push("");
+
   return lines;
 }
 
@@ -111,7 +138,7 @@ function renderTsTypeProp(
     lines.push(`${SP}/**`);
     lines.push(
       `${SP}${DOC}` +
-        (info.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
+      (info.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
     );
     lines.push(`${SP} */`);
   }
@@ -341,7 +368,8 @@ export interface ServiceMeta {
 }
 
 function renderTypeDoc(name: string, def: any): string[] {
-  if (def.allOf) return renderDocInheritance(name, def.allOf);
+  if (def.allOf && def.allOf.length >= 2)
+    return renderDocInheritance(name, def.allOf);
   if (def.type !== "object") {
     console.warn(`Unable to render ${name} ${def.type}, skipping.`);
     return [];
