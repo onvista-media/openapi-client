@@ -29,8 +29,9 @@ export function formatDocDescription(description: string): string {
   return (description || "").trim().replace(/\n/g, `\n${DOC}${SP}`);
 }
 
+const arrayCache = new Map();
+
 export function getDocType(param: any): string {
-  // console.log({ getDoc: param });
   if (!param) {
     return "object";
   } else if (param.$ref) {
@@ -40,7 +41,13 @@ export function getDocType(param: any): string {
     return getDocType(param.schema);
   } else if (param.type === "array") {
     if (param.items.type) {
-      return `${getDocType(param.items)}[]`;
+      if (arrayCache.has(param.items.type)) {
+        return `${arrayCache.get(param.items.type)}[]`;
+      } else {
+        const docType = `${getDocType(param.items)}[]`;
+        arrayCache.set(param.items.type, docType);
+        return docType;
+      }
     } else if (param.items.$ref) {
       const type = param.items.$ref.split("/").pop();
       return `module:types.${type}[]`;
@@ -59,8 +66,6 @@ export function getDocType(param: any): string {
   }
 }
 
-//
-// OW: Current wip
 export function getTSParamType(param: any, inTypesModule?: boolean): string {
   if (!param) {
     return "any";

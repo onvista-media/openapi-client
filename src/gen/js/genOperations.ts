@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {
   writeFileSync,
   join,
@@ -16,7 +17,6 @@ export default function genOperations(
   files.forEach((file) => writeFileSync(file.path, file.contents));
 }
 
-// OW: Current wip
 export function genOperationGroupFiles(
   spec: ApiSpec,
   operations: ApiOperation[],
@@ -24,24 +24,22 @@ export function genOperationGroupFiles(
 ) {
   operations.forEach((op, index) => {
     if (op.responses) {
-      writeFileSync(
-        "./output/resp.json",
-        JSON.stringify(operations[index].responses)
-      );
       operations[index].responses = operations[
         index
       ].responses.map<ApiOperationResponse>((res) => {
-        //@ts-ignore
-        if (res?.content?.["application/json"]?.schema) {
-          //@ts-ignore
-          // console.log({ schema: res.content["application/json"].schema });
-          return {
-            ...res,
-            //@ts-ignore
-            schema: res.content["application/json"].schema,
-          };
+        if (!res.content) {
+          return res;
         }
-        return res;
+        if (Object.keys(res.content).length >= 2) {
+          // currently not optimized to support multiple content return types
+          throw new Error("To many keys");
+        }
+        //@ts-ignore
+        return {
+          ...res,
+          schema:
+            res?.content[Object.keys(res?.content)[0] || ""]?.schema || {},
+        };
       });
     }
     if (op.requestBody) {
@@ -134,10 +132,10 @@ function renderDocDescription(op: ApiOperation) {
   const desc = op.description || op.summary;
   return desc
     ? `${DOC}${desc.trim()}`
-        .replace(/\/\*/g, "/ *")
-        .replace(/\*\//g, "* /")
-        .replace(/\n/g, `\n${DOC}`)
-        .split("\n")
+      .replace(/\/\*/g, "/ *")
+      .replace(/\*\//g, "* /")
+      .replace(/\n/g, `\n${DOC}`)
+      .split("\n")
     : [];
 }
 
@@ -252,17 +250,8 @@ function renderReturnSignature(
 ): string {
   if (options.language !== "ts") return "";
   const response = getBestResponse(op);
-  writeFileSync(
-    "./output/test.json",
-    JSON.stringify({ response, op, options }, null, 4)
-  );
-  // console.log({
-  //   response,
-  //   op,
-  // });
   return `: Promise<api.Response<${getTSParamType({
     ...response,
-    $ref: "#/components/schemas/UserIdentifier",
   })}>>`;
 }
 
@@ -414,7 +403,7 @@ function renderOperationParamType(
       lines.push(`${SP}/**`);
       lines.push(
         `${SP}${DOC}` +
-          (param.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
+        (param.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
       );
       lines.push(`${SP} */`);
     }

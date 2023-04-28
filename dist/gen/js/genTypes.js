@@ -30,7 +30,6 @@ function renderDefinitions(spec, options) {
     const defs = spec["components"]["schemas"] || {};
     const typeLines = isTs ? [`namespace api {`] : undefined;
     const docLines = [];
-    console.log("render types", defs);
     Object.keys(defs).forEach((name) => {
         const def = defs[name];
         if (isTs) {
@@ -44,9 +43,25 @@ function renderDefinitions(spec, options) {
     }
     return isTs ? typeLines.concat(docLines) : docLines;
 }
+function renderEnumToUnion(name, def) {
+    let lines = [];
+    lines.push(`/**`);
+    lines.push(`${support_1.DOC}${name}`);
+    if (def.description) {
+        lines.push(support_1.DOC + def.description.trim().replace(/\n/g, `\n${support_1.DOC}${support_1.SP}`));
+    }
+    lines.push(` */`);
+    lines.push(`type ${name} = ${def.enum.map((type) => `'${type}'`).join(" | ")}`);
+    lines.push("");
+    return lines;
+}
 function renderTsType(name, def, options) {
-    if (def.allOf)
+    if (def.allOf && def.allOf.length >= 2) {
         return renderTsInheritance(name, def.allOf, options);
+    }
+    if (def.type === "string" && "enum" in def) {
+        return renderEnumToUnion(name, def);
+    }
     if (def.type !== "object") {
         console.warn(`Unable to render ${name} ${def.type}, skipping.`);
         return [];
@@ -317,7 +332,7 @@ export interface ServiceMeta {
         .split("\n");
 }
 function renderTypeDoc(name, def) {
-    if (def.allOf)
+    if (def.allOf && def.allOf.length >= 2)
         return renderDocInheritance(name, def.allOf);
     if (def.type !== "object") {
         console.warn(`Unable to render ${name} ${def.type}, skipping.`);
@@ -330,7 +345,7 @@ function renderTypeDoc(name, def) {
         `${support_1.DOC}@memberof module:${group}`,
     ];
     const req = def.required || [];
-    const propLines = Object.keys(def.properties).map((prop) => {
+    const propLines = Object.keys(def.properties || {}).map((prop) => {
         const info = def.properties[prop];
         const description = (info.description || "")
             .trim()
@@ -359,7 +374,6 @@ function verifyAllOf(name, allOf) {
     if (!allOf || allOf.length !== 2) {
         throw new Error(`Json schema allOf '${name}' must have two elements to be treated as inheritance`);
     }
-    console.log("verifyAllof", { name, allOf });
     const ref = allOf[0];
     if (!ref.$ref) {
         throw new Error(`Json schema allOf '${name}' first element must be a $ref ${ref}`);

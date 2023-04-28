@@ -16,8 +16,8 @@
     "url": "https://github.com/mikestead/openapi-client/issues"
   },
   "engines": {
-    "node": ">=4.0.0",
-    "npm": ">=2.14.2"
+    "node": ">=14.18.0",
+    "npm": ">=8.19.2"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "build": "tsc",
     "predev": "npm run init",
     "dev": "tsc -w",
+    "test": "ts-node ./test/recusive-types.test.ts",
     "init": "npm run clean && npm run copy:template",
     "clean": "shx rm -rf ./dist",
     "copy:template": "shx mkdir -p ./dist/gen/js && npm run copy:service-ts && npm run copy:service-js",
