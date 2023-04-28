@@ -132,10 +132,10 @@ function renderDocDescription(op: ApiOperation) {
   const desc = op.description || op.summary;
   return desc
     ? `${DOC}${desc.trim()}`
-        .replace(/\/\*/g, "/ *")
-        .replace(/\*\//g, "* /")
-        .replace(/\n/g, `\n${DOC}`)
-        .split("\n")
+      .replace(/\/\*/g, "/ *")
+      .replace(/\*\//g, "* /")
+      .replace(/\n/g, `\n${DOC}`)
+      .split("\n")
     : [];
 }
 
@@ -250,10 +250,6 @@ function renderReturnSignature(
 ): string {
   if (options.language !== "ts") return "";
   const response = getBestResponse(op);
-  // console.log({
-  //   response,
-  //   op,
-  // });
   return `: Promise<api.Response<${getTSParamType({
     ...response,
   })}>>`;
@@ -407,7 +403,7 @@ function renderOperationParamType(
       lines.push(`${SP}/**`);
       lines.push(
         `${SP}${DOC}` +
-          (param.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
+        (param.description || "").trim().replace(/\n/g, `\n${SP}${DOC}${SP}`)
       );
       lines.push(`${SP} */`);
     }

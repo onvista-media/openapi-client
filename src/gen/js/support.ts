@@ -66,8 +66,6 @@ export function getDocType(param: any): string {
   }
 }
 
-//
-// OW: Current wip
 export function getTSParamType(param: any, inTypesModule?: boolean): string {
   if (!param) {
     return "any";
