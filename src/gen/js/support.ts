@@ -104,7 +104,7 @@ export function getTSParamType(param: any, inTypesModule?: boolean): string {
     param.type === "string" &&
     (param.format === "date-time" || param.format === "date")
   ) {
-    return "Date";
+    return "string";
   } else {
     return param.type || "any";
   }
