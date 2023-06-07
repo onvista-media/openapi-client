@@ -120,7 +120,7 @@ function getTSParamType(param, inTypesModule) {
     }
     else if (param.type === "string" &&
         (param.format === "date-time" || param.format === "date")) {
-        return "Date";
+        return "string";
     }
     else {
         return param.type || "any";
