@@ -256,7 +256,7 @@ export interface ServiceOptions {
    *     }
    *     return reqInfo
    */
-  processRequest?: (op: OperationInfo, reqInfo: RequestInfo) => RequestInfo${ST}
+  processRequest?: (op: OperationInfo, reqInfo: RequestInfo) => { op: OperationInfo, reqInfo: RequestInfo }${ST}
   /**
    * If you need some type of request retry behavior this function
    * is the place to do it.
