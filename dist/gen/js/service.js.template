@@ -16,13 +16,16 @@ export function request(op, parameters, attempt) {
 			parameters = parameters || {};;
 			const baseUrl = getBaseUrl(spec);;
 			let reqInfo = { parameters, baseUrl };;
+			let operation = op;;
 			if (options.processRequest) {
-				reqInfo = options.processRequest(op, reqInfo);;
+				const processedRequest = options.processRequest(op, reqInfo);;
+				operation = processedRequest.op;;
+				reqInfo = processedRequest.reqInfo;;
 			}
-			const req = buildRequest(op, reqInfo.baseUrl, reqInfo.parameters, rights);;
+			const req = buildRequest(operation, reqInfo.baseUrl, reqInfo.parameters, rights);;
 			return makeFetchRequest(req)
 				.then(res => processResponse(req, res, attempt, options), e => processError(req, e))
-				.then(outcome => outcome.retry ? request(op, parameters, attempt + 1) : outcome.res);;
+				.then(outcome => outcome.retry ? request(operation, parameters, attempt + 1) : outcome.res);;
 		});;
 }
 
