@@ -154,7 +154,7 @@ function renderTsDefaultTypes() {
   schemes: string[]${ST}
   contentTypes: string[]${ST}
   accepts: string[]${ST}
-  securityDefinitions?: {[key: string]: SecurityDefinition}${ST}
+  securityDefinitions: {[key: string]: SecurityDefinition}${ST}
 }
 
 export interface SecurityDefinition {
