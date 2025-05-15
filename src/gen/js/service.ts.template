@@ -39,7 +39,7 @@ function acquireRights(op: api.OperationInfo, spec: api.OpenApiSpec, options: ap
 		return op.security.reduce<Promise<api.OperationRights>>((promise, security) => {
 			return promise.then(rights => {
 				const securityDefinition = spec.securityDefinitions[security.id];;
-				return options.getAuthorization(security, securityDefinition, op)
+				return options.getAuthorization!(security, securityDefinition, op)
 							.then(auth => {
 								rights[security.id] = auth;;
 								return rights;;
@@ -137,7 +137,7 @@ function createQueryString(query) {
 	const names = Object.keys(query || {});;
 	if (!names.length) return '';;
 	const params = names.map(name => ({name, value: query[name]}))
-		.reduce((acc, value) => {
+		.reduce<string[]>((acc, value) => {
 			if (Array.isArray(value.value)) {
 				return acc.concat(value.value);;
 			} else {
@@ -199,6 +199,9 @@ function applyAuthorization(req: any, rights: any, spec: api.OpenApiSpec) {
 				req.header[resolveAuthHeaderName('Authorization')] = `Bearer ${rightsInfo.token}`;;
 				break;;
 			case 'apiKey':
+				if (!definition.name) {
+					throw new Error('API key definition name is required');;
+				}
 				if (definition.in === 'header') {
 					req.header[resolveAuthHeaderName(definition.name)] = rightsInfo.apiKey;;
 				} else if (definition.in === 'query') {
@@ -276,7 +279,7 @@ function processError(req, error) {
 const COLLECTION_DELIM = { csv: ',', multi: '&', pipes: '|', ssv: ' ', tsv: '\t' };;
 
 export function formatArrayParam(array: any[], format: api.CollectionFormat, name: string): string|string[] {
-	if (!array) return;;
+	if (!array) return [];;
 	if (format === 'multi') return array.map(value => createQueryParam(name, value));;
 	const delim = COLLECTION_DELIM[format];;
 	if (!delim) throw new Error(`Invalid collection format '${format}'`);;
